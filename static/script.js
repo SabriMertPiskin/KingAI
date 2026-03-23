@@ -166,8 +166,8 @@ function getCardSlot(playerIdx) {
     const cx = rect.left + rect.width  / 2;   // horizontal center of board
     const cy = rect.top  + rect.height / 2;   // vertical   center of board
     const h    = 220;   // horizontal offset (Agent 1 left, Agent 3 right)
-    const vUp  = 120;   // vertical offset upward (Agent 2 — avoid overlapping label)
-    const vDown = 200;  // vertical offset downward (You — closer to hand bar)
+    const vUp  = 60;    // vertical offset upward (Agent 2 — reduced to keep card visible below info box)
+    const vDown = 120;  // vertical offset downward (You — reduced to avoid overlap with player info box)
     return [
         { left: cx,     top: cy + vDown },   // Player 0 – bottom (You)
         { left: cx - h, top: cy         },   // Player 1 – left   (Agent 1)
