@@ -1,0 +1,317 @@
+:root {
+    --bg-dark: #0f172a;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.5);
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    
+    --card-bg: #1e293b;
+    --red-suit: #ef4444;
+    --black-suit: #f8fafc; /* For dark mode, spades/clubs can be white-ish or light blue */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Background layers for premium feel */
+.stars, .twinkling {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+}
+.stars {
+    background: #000 url('https://raw.githubusercontent.com/frontend-joe/css-backgrounds/main/stars/stars.png') repeat top center;
+}
+.twinkling {
+    background: transparent url('https://raw.githubusercontent.com/frontend-joe/css-backgrounds/main/stars/twinkling.png') repeat top center;
+    animation: move-twink-back 200s linear infinite;
+}
+@keyframes move-twink-back {
+    from {background-position: 0 0;}
+    to {background-position: -10000px 5000px;}
+}
+
+.app-container {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%; /* Push limits to the absolute edge to separate side agents */
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    position: relative;
+    z-index: 10;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.logo h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+.logo span {
+    color: var(--accent);
+}
+
+.btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn.primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    box-shadow: 0 4px 15px var(--accent-glow);
+}
+.btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--accent-glow);
+}
+
+/* Board */
+.game-board {
+    flex-grow: 1;
+    position: relative;
+    margin: 2rem 0;
+}
+
+/* Opponents */
+.opponent {
+    position: absolute;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 1rem;
+    border-radius: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    min-width: 140px;
+    z-index: 20;
+}
+.opp-top { top: 0; left: 50%; transform: translateX(-50%); }
+.opp-left { top: 50%; left: 0; transform: translateY(-50%); }
+.opp-right { top: 50%; right: 0; transform: translateY(-50%); }
+
+.avatar {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+.stats {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+.penalty {
+    color: #ef4444;
+    font-weight: bold;
+}
+
+/* Table Area — now just a transparent container;
+   trick-area handles its own fixed positioning */
+.table {
+    position: relative;
+    width: 100%; height: 100%;
+    pointer-events: none;
+}
+
+/* trick-area is fixed to viewport — provides a stable coordinate space.
+   Card positions are computed in JS via getBoundingClientRect. */
+.trick-area {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;   /* clicks pass through to hand cards */
+    z-index: 5;
+}
+
+/* card-played: position is set via inline styles by renderTrickCards().
+   !important needed because .card (below) also sets position:relative,
+   and it would otherwise override this due to cascade order. */
+.card-played {
+    position: absolute !important;
+    pointer-events: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Playing Card Base Style */
+.card {
+    width: 80px;
+    height: 120px;
+    background: linear-gradient(135deg, #2b3b55 0%, #172336 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    user-select: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.card.suit-Heart, .card.suit-Diamond {
+    color: var(--red-suit);
+    text-shadow: 0 2px 10px rgba(239, 68, 68, 0.3);
+}
+
+.card.suit-Spade, .card.suit-Club {
+    color: var(--black-suit);
+}
+
+.card .rank-top {
+    position: absolute;
+    top: 5px; left: 8px;
+    font-size: 1rem;
+}
+.card .suit-center {
+    font-size: 3rem;
+}
+
+/* Hand (Player) */
+.player-area {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    border-top: 1px solid var(--glass-border);
+    border-left: 1px solid var(--glass-border);
+    border-right: 1px solid var(--glass-border);
+    padding: 0.5rem 1.5rem; 
+    border-radius: 1rem 1rem 0 0; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 750px; /* NEW: Narrrow it horizontally as requested */
+    margin: 0 auto; /* Keep it centered */
+}
+
+.player-info {
+    text-align: center;
+    margin-bottom: 0.5rem; /* Reduced margin */
+}
+.player-info h2 {
+    font-size: 1.1rem; /* Slightly smaller text */
+    color: #fff;
+    margin-bottom: 0.2rem;
+}
+
+.hand {
+    display: flex;
+    gap: -30px; /* Overlap cards slightly */
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    padding: 10px 0; /* Reduced padding */
+    perspective: 1000px;
+    min-height: 120px; /* Reduced to shrink the box */
+}
+
+.hand .card {
+    margin-left: -35px;
+    cursor: pointer;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+}
+.hand .card:first-child {
+    margin-left: 0;
+}
+
+.hand .card:hover {
+    transform: translateY(-20px) scale(1.1);
+    z-index: 50;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    background: linear-gradient(135deg, #374b6c 0%, #1e2c45 100%);
+}
+
+.hand .card.illegal {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(100%);
+}
+.hand .card.illegal:hover {
+    transform: translateY(0);
+}
+
+/* Modals & Toasts */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+.modal.hidden {
+    display: none;
+}
+.modal-content {
+    background: var(--glass-bg);
+    padding: 3rem;
+    border-radius: 1rem;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+.modal-content h2 {
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+}
+.modal-content #final-scores p {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 200;
+}
+.toast.show {
+    transform: translateY(0);
+    opacity: 1;
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>King AI Lab - Premium Web Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=5">
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+
+    <div class="app-container">
+        <!-- Header / Controls-->
+        <header>
+            <div class="logo">
+                <h1>King AI <span>Lab</span></h1>
+            </div>
+            <button id="btn-start" class="btn primary">Start New Game</button>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="game-board">
+            <!-- Opponents -->
+            <div class="opponent opp-top" id="opp-2">
+                <div class="avatar">🤖 Agent 2</div>
+                <div class="stats">Cards: <span class="card-count">13</span> | Penalty: <span class="penalty">0</span></div>
+            </div>
+            
+            <div class="opponent opp-left" id="opp-1">
+                <div class="avatar">🤖 Agent 1</div>
+                <div class="stats">Cards: <span class="card-count">13</span><br>Penalty: <span class="penalty">0</span></div>
+            </div>
+            
+            <div class="opponent opp-right" id="opp-3">
+                <div class="avatar">🤖 Agent 3</div>
+                <div class="stats">Cards: <span class="card-count">13</span><br>Penalty: <span class="penalty">0</span></div>
+            </div>
+
+            <!-- Table (Center) -->
+            <div class="table">
+                <div class="trick-area" id="trick-area">
+                    <!-- Cards played in the current trick will appear here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Player Info & Hand -->
+        <footer class="player-area">
+            <div class="player-info">
+                <h2>Sabri (You)</h2>
+                <div class="stats">Penalty: <span class="penalty" id="my-penalty">0</span></div>
+            </div>
+            <div class="hand" id="my-hand">
+                <!-- Human cards will be injected here -->
+            </div>
+        </footer>
+        
+        <!-- Game Over Modal -->
+        <div id="game-over-modal" class="modal hidden">
+            <div class="modal-content glassmorphism">
+                <h2>Oyun Bitti! (Game Over)</h2>
+                <div id="final-scores"></div>
+                <button id="btn-restart" class="btn primary">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback toast -->
+    <div id="toast" class="toast">Info</div>
+
+    <script src="{{ url_for('static', filename='script.js') }}?v=5"></script>
+</body>
+</html>
