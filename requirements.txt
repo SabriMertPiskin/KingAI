@@ -1,0 +1,7 @@
+# KingAI - Kız Almaz Card Game AI
+# Core ML
+torch
+numpy
+
+# Web App
+flask
